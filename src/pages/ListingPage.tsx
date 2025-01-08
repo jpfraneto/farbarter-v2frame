@@ -1,69 +1,50 @@
 import { useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { getListingDetails } from "../lib/listings";
 import ListingContainer from "../components/listings/ListingContainer";
 
 export default function ListingPage() {
   const { listingId } = useParams<{ listingId: string }>();
+  const [listing, setListing] = useState<any>(null);
 
   useEffect(() => {
-    async function updateMetadata() {
+    async function fetchListing() {
       if (!listingId) return;
 
       try {
-        const listing = await getListingDetails(listingId);
-
-        // Update document metadata
-        document.title = `${listing.metadata.name} | Farbarter`;
-
-        // Update meta description
-        let metaDescription = document.querySelector(
-          'meta[name="description"]'
-        );
-        if (!metaDescription) {
-          metaDescription = document.createElement("meta");
-          metaDescription.setAttribute("name", "description");
-          document.head.appendChild(metaDescription);
-        }
-        metaDescription.setAttribute("content", listing.metadata.description);
-
-        // Add Farcaster frame metadata
-        const frameMetadata = {
-          version: "vNext",
-          image: listing.metadata.imageUrl,
-          buttons: [
-            {
-              label: "View Listing",
-              action: "link",
-              target: `${window.location.origin}/listings/${listingId}`,
-            },
-          ],
-        };
-
-        let frameMetaTag = document.querySelector('meta[property="fc:frame"]');
-        if (!frameMetaTag) {
-          frameMetaTag = document.createElement("meta");
-          frameMetaTag.setAttribute("property", "fc:frame");
-          document.head.appendChild(frameMetaTag);
-        }
-        frameMetaTag.setAttribute("content", JSON.stringify(frameMetadata));
+        const listingData = await getListingDetails(listingId);
+        setListing(listingData);
       } catch (error) {
-        console.error("Error updating metadata:", error);
+        console.error("Error fetching listing:", error);
       }
     }
 
-    updateMetadata();
-
-    // Cleanup function
-    return () => {
-      const frameMetaTag = document.querySelector('meta[property="fc:frame"]');
-      if (frameMetaTag) {
-        document.head.removeChild(frameMetaTag);
-      }
-    };
+    fetchListing();
   }, [listingId]);
 
-  if (!listingId) return null;
+  if (!listingId || !listing) return null;
 
-  return <ListingContainer listingId={listingId} />;
+  const frameMetadata = {
+    version: "vNext",
+    image: listing.metadata.imageUrl,
+    buttons: [
+      {
+        label: "View Listing",
+        action: "link",
+        target: `${window.location.origin}/listings/${listingId}`,
+      },
+    ],
+  };
+
+  return (
+    <>
+      <Helmet>
+        <title>{`${listing.metadata.name} | Farbarter`}</title>
+        <meta name="description" content={listing.metadata.description} />
+        <meta property="fc:frame" content={JSON.stringify(frameMetadata)} />
+      </Helmet>
+      <ListingContainer listingId={listingId} />
+    </>
+  );
 }
