@@ -118,7 +118,7 @@ function App({ title = "farbarter" }: Props) {
 
   console.log("🎨 Rendering component with", listings.length, "listings");
   return (
-    <div className="min-h-screen bg-[#13111C] text-[#E2E8F0] relative font-[Space_Grotesk]">
+    <div className="w-full min-h-screen bg-[#13111C] text-[#E2E8F0] relative font-[Space_Grotesk]">
       <div className="min-h-screen flex flex-col items-center p-8 relative bg-[radial-gradient(circle_at_top_right,#7C3AED_0%,transparent_60%),radial-gradient(circle_at_bottom_left,#C084FC_0%,transparent_60%)]">
         <h1 className="text-7xl md:text-8xl font-bold my-8 bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#6366F1] bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_40px_rgba(124,58,237,0.5)] animate-pulse">
           {title}

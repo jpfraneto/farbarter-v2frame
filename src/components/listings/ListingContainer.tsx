@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { getListingDetails } from "../../lib/listings";
 import { ListingImage } from "./ListingImage";
