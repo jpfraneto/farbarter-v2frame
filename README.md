@@ -1,50 +1,36 @@
-# React + TypeScript + Vite
+# Farbarter
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The first on-chain P2P marketplace built on Farcaster. Farbarter enables secure trading of digital goods, services and collectibles through smart contracts and reputation-based trust.
 
-Currently, two official plugins are available:
+## Core Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Smart Contract Escrow**: Secure trading with automated escrow system
+- **Reputation System**: Build trust through successful trades
+- **Farcaster Integration**: Seamless listing creation by tagging @farbarterbot
+- **Multi-Chain Payments**: Accept any token on any chain
+- **Lightning Fast Listings**: No forms - just tag, price, and go live
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- React 18 + TypeScript
+- Vite for blazing fast builds
+- TailwindCSS for styling
+- @farcaster/frame-sdk for Farcaster integration
+- Ponder for blockchain indexing
+- IPFS/Pinata for metadata storage
 
-- Configure the top-level `parserOptions` property like this:
+## Local Development
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+1. Clone the repository
+2. Install dependencies with `npm install`
+3. Create a `.env` file with required environment variables
+4. Run `npm run dev` to start the development server
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Deploying via orbiter
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+1. Clone the repository
+2. Install dependencies with `npm run build`
+3. Go to [orbiter.host](https://orbiter.host) and create a new project
+4. Drag and drop the `dist` folder that was built into the orbiter project
+5. Click "Deploy"
+6. Once the deployment is complete, click "View" to view your deployed app
