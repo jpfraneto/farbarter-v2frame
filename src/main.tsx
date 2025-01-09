@@ -5,6 +5,7 @@ import sdk from "@farcaster/frame-sdk";
 import App from "./App";
 import "./index.css";
 import ListingPage from "./pages/ListingPage";
+import ListingsPage from "./pages/ListingsPage";
 import FarcasterJson from "../public/.well-known/farcaster.json";
 import FarcasterProvider from "./components/providers/FarcasterProvider";
 
@@ -12,6 +13,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/listings",
+    element: <ListingsPage />,
   },
   {
     path: "/listings/:listingId",
