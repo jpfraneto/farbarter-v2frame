@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { getListingDetails, type ListingDetails } from "../lib/listings";
 import axios from "axios";
+import sdk from "@farcaster/frame-sdk";
 
 const ListingPage: React.FC = () => {
   const { listingId } = useParams();
@@ -11,6 +12,7 @@ const ListingPage: React.FC = () => {
   const [isReserved, setIsReserved] = useState(false);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
   const [isGeneratingPayment, setIsGeneratingPayment] = useState(false);
+  const [isFarcasterClient, setIsFarcasterClient] = useState(false);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -19,6 +21,15 @@ const ListingPage: React.FC = () => {
         const details = await getListingDetails(listingId);
         setListing(details);
         setError(null);
+        try {
+          const farcasterContext = await sdk.context;
+          if (farcasterContext?.user?.fid) {
+            console.log("the client... it is a farcaster client");
+            setIsFarcasterClient(true);
+          }
+        } catch (error) {
+          console.log("the client... it is not a farcaster client", error);
+        }
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to fetch listing"
@@ -160,45 +171,59 @@ const ListingPage: React.FC = () => {
 
               {listing.isActive ? (
                 <>
-                  {isReserved ? (
-                    <div className="flex flex-col gap-4 mt-6">
-                      <a
-                        className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
-                        href={paymentLink || ""}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                  {isFarcasterClient ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          // call directly the smart contract to complete the purchase
+                        }}
                       >
                         Pay {listing.price} USDC now
-                      </a>
-                      <button
-                        className="text-sm text-[#E2E8F0]/50 hover:text-[#E2E8F0]/80 transition-colors"
-                        onClick={() =>
-                          navigator.clipboard.writeText(paymentLink || "")
-                        }
-                      >
-                        Copy payment link
                       </button>
-                    </div>
+                    </>
                   ) : (
-                    <div className="flex gap-4 mt-6">
-                      <button
-                        className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg flex justify-center items-center"
-                        onClick={buyListing}
-                        disabled={isGeneratingPayment}
-                      >
-                        {isGeneratingPayment ? (
-                          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          `Buy for ${listing.price} USDC`
-                        )}
-                      </button>
-                      <button
-                        className="w-2/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
-                        onClick={() => (window.location.href = "/")}
-                      >
-                        Back
-                      </button>
-                    </div>
+                    <>
+                      {isReserved ? (
+                        <div className="flex flex-col gap-4 mt-6">
+                          <a
+                            className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
+                            href={paymentLink || ""}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Pay {listing.price} USDC now
+                          </a>
+                          <button
+                            className="text-sm text-[#E2E8F0]/50 hover:text-[#E2E8F0]/80 transition-colors"
+                            onClick={() =>
+                              navigator.clipboard.writeText(paymentLink || "")
+                            }
+                          >
+                            Copy payment link
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex gap-4 mt-6">
+                          <button
+                            className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg flex justify-center items-center"
+                            onClick={buyListing}
+                            disabled={isGeneratingPayment}
+                          >
+                            {isGeneratingPayment ? (
+                              <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            ) : (
+                              `Buy for ${listing.price} USDC`
+                            )}
+                          </button>
+                          <button
+                            className="w-2/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
+                            onClick={() => (window.location.href = "/")}
+                          >
+                            Back
+                          </button>
+                        </div>
+                      )}
+                    </>
                   )}
                 </>
               ) : (
