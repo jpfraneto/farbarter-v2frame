@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjE2MDk4LCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4YUIyMERlOGY1QTRmOGUxNDdCYWFDOUQxZjZlMjM2ODYxNDg1NTE2QSJ9",
+    "payload": "eyJkb21haW4iOiJmYXJiYXJ0ZXIuY29tIn0",
+    "signature": "MHg2MTdjMGIzOGExN2I4MDE4MDFlM2ZlYmNjMzRkMmQwMDUyYzcxMGMwMDVlZjZhZDg1MmRjYTBmZWRiZGFmNTk0NGI2ZWM3YzhmNGFhZDEyNzhmZGM1NjZlMGRhYjg1ZmU2NDdiNjJmZjcyNGYzYmRjZWEzNjAyZWI1NTNhNGFhNzFj"
+  },
+  "frame": {
+    "version": "0.0.5",
+    "name": "Farbarter",
+    "iconUrl": "https://github.com/jpfraneto/images/blob/main/farbarter-logo.png?raw=true",
+    "homeUrl": "https://farbarter.com",
+    "imageUrl": "https://github.com/jpfraneto/images/blob/main/farbarter.png?raw=true",
+    "buttonTitle": "Buy Item",
+    "splashImageUrl": "https://imagedelivery.net/BXluQx4ige9GuW0Ia56BHw/5d75cc14-edd3-4fd1-00f4-63ea57cd7d00/rectcrop3",
+    "splashBackgroundColor": "#eeccff",
+    "webhookUrl": "https://farcaster.anky.bot/farbarter/framesv2-webhook"
+  }
+}

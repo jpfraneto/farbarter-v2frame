@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import ListingsGrid from "./components/listings/ListingsGrid";
 import sdk from "@farcaster/frame-sdk";
+import { Helmet } from "react-helmet";
 
 interface Props {
   title?: string;
@@ -117,190 +118,225 @@ function App({ title = "farbarter" }: Props) {
     }
   };
 
+  const frameEmbedInfo = {
+    version: "next",
+    imageUrl:
+      "https://github.com/jpfraneto/images/blob/main/farbarter.png?raw=true",
+    button: {
+      title: "Shop Now",
+      action: {
+        type: "launch_frame",
+        name: "Farbarter",
+        url: "https://farbarter.com",
+        splashImageUrl: "",
+        splashBackgroundColor: "#4D8C97",
+      },
+    },
+  };
+
   console.log("🎨 Rendering component with", listings.length, "listings");
   return (
-    <div className="w-full min-h-screen bg-[#13111C] text-[#E2E8F0] relative font-[Space_Grotesk]">
-      <div className="min-h-screen flex flex-col items-center p-8 relative bg-[radial-gradient(circle_at_top_right,#7C3AED_0%,transparent_60%),radial-gradient(circle_at_bottom_left,#C084FC_0%,transparent_60%)]">
-        <h1 className="text-7xl md:text-8xl font-bold my-8 bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#6366F1] bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_40px_rgba(124,58,237,0.5)] animate-pulse">
-          {title}
-        </h1>
+    <>
+      <Helmet>
+        <meta name="fc:frame" content={JSON.stringify(frameEmbedInfo)} />
+        <meta
+          property="og:title"
+          content="Farbarter - P2P Marketplace for Farcaster"
+        />
+        <meta
+          property="og:description"
+          content="Trade anything, anywhere, with anyone – secured by smart contracts and powered by your reputation."
+        />
+        <meta
+          property="og:image"
+          content="https://farbarter.com/og-image.png"
+        />
+      </Helmet>
 
-        <h2 className="text-3xl text-center max-w-2xl mb-6 text-[#E2E8F0]/90">
-          The First On-Chain P2P Marketplace for Farcaster
-        </h2>
+      <div className="w-full min-h-screen bg-[#13111C] text-[#E2E8F0] relative font-[Space_Grotesk]">
+        <div className="min-h-screen flex flex-col items-center p-8 relative bg-[radial-gradient(circle_at_top_right,#7C3AED_0%,transparent_60%),radial-gradient(circle_at_bottom_left,#C084FC_0%,transparent_60%)]">
+          <h1 className="text-7xl md:text-8xl font-bold my-8 bg-gradient-to-r from-[#A855F7] via-[#7C3AED] to-[#6366F1] bg-clip-text text-transparent tracking-tight drop-shadow-[0_0_40px_rgba(124,58,237,0.5)] animate-pulse">
+            {title}
+          </h1>
 
-        <p className="text-xl text-center max-w-2xl mb-12 text-[#E2E8F0]/80">
-          Trade anything, anywhere, with anyone – secured by smart contracts and
-          powered by your reputation.
-        </p>
+          <h2 className="text-3xl text-center max-w-2xl mb-6 text-[#E2E8F0]/90">
+            The First On-Chain P2P Marketplace for Farcaster
+          </h2>
 
-        <div className="flex flex-col items-center gap-6 mb-12 text-xl text-[#E2E8F0]/90">
-          <div className="flex items-center gap-4">
-            <p>Instructions:</p>
-          </div>
-          <button
-            onClick={async () => {
-              const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(
-                `@farbarterbot please help me sell XXX for XXX USDC. here goes the image for the listing on /farbarter`
-              )}`;
-              try {
-                const context = await sdk.context;
-                if (context?.user?.fid) {
-                  sdk.actions.openUrl(url);
-                } else {
+          <p className="text-xl text-center max-w-2xl mb-12 text-[#E2E8F0]/80">
+            Trade anything, anywhere, with anyone – secured by smart contracts
+            and powered by your reputation.
+          </p>
+
+          <div className="flex flex-col items-center gap-6 mb-12 text-xl text-[#E2E8F0]/90">
+            <div className="flex items-center gap-4">
+              <p>Instructions:</p>
+            </div>
+            <button
+              onClick={async () => {
+                const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(
+                  `@farbarterbot please help me sell XXX for XXX USDC. here goes the image for the listing on /farbarter`
+                )}`;
+                try {
+                  const context = await sdk.context;
+                  if (context?.user?.fid) {
+                    sdk.actions.openUrl(url);
+                  } else {
+                    window.open(url, "_blank");
+                  }
+                } catch (error) {
                   window.open(url, "_blank");
                 }
-              } catch (error) {
-                window.open(url, "_blank");
-              }
+              }}
+              className="bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:from-[#6D28D9] hover:to-[#4F46E5] text-white font-bold py-4 px-8 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 animate-pulse hover:animate-none border-2 border-transparent hover:border-[#A855F7]"
+            >
+              🪄 Cast and Tag @farbarterbot ✨
+            </button>
+          </div>
+
+          {loading ? (
+            <div className="w-full max-w-6xl flex items-center justify-center mb-16">
+              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#7C3AED]" />
+            </div>
+          ) : (
+            <ListingsGrid listings={listings} />
+          )}
+
+          <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
+              <h3 className="text-2xl font-bold mb-4 text-[#A855F7]">
+                🤝 Sell With Confidence
+              </h3>
+              <p className="text-[#E2E8F0]/80">
+                List your digital goods, services, or collectibles in seconds.
+                Just tag @farbarterbot with your price and description. Our
+                escrow system ensures you get paid when the deal is done.
+              </p>
+            </div>
+
+            <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
+              <h3 className="text-2xl font-bold mb-4 text-[#A855F7]">
+                🌈 Accept Any Payment
+              </h3>
+              <p className="text-[#E2E8F0]/80">
+                Buyers can pay with any token on any chain. You set your
+                preferred payment method, but stay flexible to capture more
+                sales. Smart contracts handle the complexity – you just get
+                paid.
+              </p>
+            </div>
+
+            <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
+              <h3 className="text-2xl font-bold mb-4 text-[#A855F7]">
+                ⚡ Lightning Fast Listings
+              </h3>
+              <p className="text-[#E2E8F0]/80">
+                No complicated forms. No lengthy approval process.
+                <br />
+                1. Tag @farbarterbot
+                <br />
+                2. Set your price
+                <br />
+                3. You&apos;re live!
+              </p>
+            </div>
+          </div>
+
+          <div className="w-full max-w-6xl mb-16">
+            <h2 className="text-3xl font-bold mb-8 text-center text-[#A855F7]">
+              🛡️ Built-in Protection
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-[#1A1625]/80 p-6 rounded-xl border border-[#7C3AED]">
+                <p className="text-center text-[#E2E8F0]">
+                  Smart contract escrow
+                </p>
+              </div>
+              <div className="bg-[#1A1625]/80 p-6 rounded-xl border border-[#7C3AED]">
+                <p className="text-center text-[#E2E8F0]">Reputation scoring</p>
+              </div>
+              <div className="bg-[#1A1625]/80 p-6 rounded-xl border border-[#7C3AED]">
+                <p className="text-center text-[#E2E8F0]">Dispute resolution</p>
+              </div>
+              <div className="bg-[#1A1625]/80 p-6 rounded-xl border border-[#7C3AED]">
+                <p className="text-center text-[#E2E8F0]">
+                  7-day safety timelock
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full max-w-6xl mb-16">
+            <h2 className="text-3xl font-bold mb-8 text-center text-[#A855F7]">
+              💫 Reputation Matters
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
+                <h3 className="text-xl font-bold mb-4 text-[#E2E8F0]">
+                  Build Trust Through Trading
+                </h3>
+                <ul className="space-y-2 text-[#E2E8F0]/80">
+                  <li>• More visibility for your listings</li>
+                  <li>• Access to premium features</li>
+                  <li>• "Trusted Seller" badge</li>
+                  <li>• Lower fees (coming soon)</li>
+                </ul>
+              </div>
+              <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
+                <h3 className="text-xl font-bold mb-4 text-[#E2E8F0]">
+                  True Ownership
+                </h3>
+                <ul className="space-y-2 text-[#E2E8F0]/80">
+                  <li>• Your listings, your rules</li>
+                  <li>• Keep full custody of your assets</li>
+                  <li>• Choose your payment preferences</li>
+                  <li>• Set your own terms</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full max-w-4xl bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED] mb-16">
+            <h2 className="text-3xl font-bold mb-6 text-center text-[#A855F7]">
+              🚀 Getting Started
+            </h2>
+            <div className="space-y-4 text-center">
+              <p className="text-[#E2E8F0]/80">1. Have a Farcaster account</p>
+              <p className="text-[#E2E8F0]/80">
+                2. Tag @farbarterbot with what you want to sell
+              </p>
+              <p className="text-[#E2E8F0]/80">3. Set your price in USDC</p>
+              <p className="text-[#E2E8F0]/80">4. Share with your audience!</p>
+            </div>
+          </div>
+
+          <div className="text-center max-w-2xl mb-12">
+            <h2 className="text-3xl font-bold mb-4 text-[#A855F7]">
+              Ready to Start Trading?
+            </h2>
+            <p className="text-xl text-[#E2E8F0]/90 mb-6">
+              Tag @farbarterbot in a cast with what you want to sell. Join the
+              fastest-growing P2P marketplace in the Farcaster ecosystem.
+            </p>
+            <p className="text-[#E2E8F0]/70 italic">
+              *Powered by smart contracts. Protected by reputation. Built for
+              you.*
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              sdk.actions.openUrl(
+                `https://warpcast.com/~/compose?text=${encodeURIComponent(
+                  `@jpfraneto this is the feedback i have for /farbarter    `
+                )}`
+              );
             }}
-            className="bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:from-[#6D28D9] hover:to-[#4F46E5] text-white font-bold py-4 px-8 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 animate-pulse hover:animate-none border-2 border-transparent hover:border-[#A855F7]"
           >
-            🪄 Cast and Tag @farbarterbot ✨
+            Tag @farbarterbot
           </button>
         </div>
-
-        {loading ? (
-          <div className="w-full max-w-6xl flex items-center justify-center mb-16">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#7C3AED]" />
-          </div>
-        ) : (
-          <ListingsGrid listings={listings} />
-        )}
-
-        <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
-            <h3 className="text-2xl font-bold mb-4 text-[#A855F7]">
-              🤝 Sell With Confidence
-            </h3>
-            <p className="text-[#E2E8F0]/80">
-              List your digital goods, services, or collectibles in seconds.
-              Just tag @farbarterbot with your price and description. Our escrow
-              system ensures you get paid when the deal is done.
-            </p>
-          </div>
-
-          <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
-            <h3 className="text-2xl font-bold mb-4 text-[#A855F7]">
-              🌈 Accept Any Payment
-            </h3>
-            <p className="text-[#E2E8F0]/80">
-              Buyers can pay with any token on any chain. You set your preferred
-              payment method, but stay flexible to capture more sales. Smart
-              contracts handle the complexity – you just get paid.
-            </p>
-          </div>
-
-          <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
-            <h3 className="text-2xl font-bold mb-4 text-[#A855F7]">
-              ⚡ Lightning Fast Listings
-            </h3>
-            <p className="text-[#E2E8F0]/80">
-              No complicated forms. No lengthy approval process.
-              <br />
-              1. Tag @farbarterbot
-              <br />
-              2. Set your price
-              <br />
-              3. You&apos;re live!
-            </p>
-          </div>
-        </div>
-
-        <div className="w-full max-w-6xl mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center text-[#A855F7]">
-            🛡️ Built-in Protection
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-[#1A1625]/80 p-6 rounded-xl border border-[#7C3AED]">
-              <p className="text-center text-[#E2E8F0]">
-                Smart contract escrow
-              </p>
-            </div>
-            <div className="bg-[#1A1625]/80 p-6 rounded-xl border border-[#7C3AED]">
-              <p className="text-center text-[#E2E8F0]">Reputation scoring</p>
-            </div>
-            <div className="bg-[#1A1625]/80 p-6 rounded-xl border border-[#7C3AED]">
-              <p className="text-center text-[#E2E8F0]">Dispute resolution</p>
-            </div>
-            <div className="bg-[#1A1625]/80 p-6 rounded-xl border border-[#7C3AED]">
-              <p className="text-center text-[#E2E8F0]">
-                7-day safety timelock
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full max-w-6xl mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center text-[#A855F7]">
-            💫 Reputation Matters
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
-              <h3 className="text-xl font-bold mb-4 text-[#E2E8F0]">
-                Build Trust Through Trading
-              </h3>
-              <ul className="space-y-2 text-[#E2E8F0]/80">
-                <li>• More visibility for your listings</li>
-                <li>• Access to premium features</li>
-                <li>• "Trusted Seller" badge</li>
-                <li>• Lower fees (coming soon)</li>
-              </ul>
-            </div>
-            <div className="bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED]">
-              <h3 className="text-xl font-bold mb-4 text-[#E2E8F0]">
-                True Ownership
-              </h3>
-              <ul className="space-y-2 text-[#E2E8F0]/80">
-                <li>• Your listings, your rules</li>
-                <li>• Keep full custody of your assets</li>
-                <li>• Choose your payment preferences</li>
-                <li>• Set your own terms</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full max-w-4xl bg-[#1A1625]/90 p-8 rounded-xl border border-[#7C3AED] mb-16">
-          <h2 className="text-3xl font-bold mb-6 text-center text-[#A855F7]">
-            🚀 Getting Started
-          </h2>
-          <div className="space-y-4 text-center">
-            <p className="text-[#E2E8F0]/80">1. Have a Farcaster account</p>
-            <p className="text-[#E2E8F0]/80">
-              2. Tag @farbarterbot with what you want to sell
-            </p>
-            <p className="text-[#E2E8F0]/80">3. Set your price in USDC</p>
-            <p className="text-[#E2E8F0]/80">4. Share with your audience!</p>
-          </div>
-        </div>
-
-        <div className="text-center max-w-2xl mb-12">
-          <h2 className="text-3xl font-bold mb-4 text-[#A855F7]">
-            Ready to Start Trading?
-          </h2>
-          <p className="text-xl text-[#E2E8F0]/90 mb-6">
-            Tag @farbarterbot in a cast with what you want to sell. Join the
-            fastest-growing P2P marketplace in the Farcaster ecosystem.
-          </p>
-          <p className="text-[#E2E8F0]/70 italic">
-            *Powered by smart contracts. Protected by reputation. Built for
-            you.*
-          </p>
-        </div>
-        <button
-          onClick={() => {
-            sdk.actions.openUrl(
-              `https://warpcast.com/~/compose?text=${encodeURIComponent(
-                `@jpfraneto this is the feedback i have for /farbarter    `
-              )}`
-            );
-          }}
-        >
-          Tag @farbarterbot
-        </button>
       </div>
-    </div>
+    </>
   );
 }
 
