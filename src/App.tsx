@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import ListingsGrid from "./components/listings/ListingsGrid";
+import sdk from "@farcaster/frame-sdk";
 
 interface Props {
   title?: string;
@@ -133,6 +134,32 @@ function App({ title = "farbarter" }: Props) {
           powered by your reputation.
         </p>
 
+        <div className="flex flex-col items-center gap-6 mb-12 text-xl text-[#E2E8F0]/90">
+          <div className="flex items-center gap-4">
+            <p>Instructions:</p>
+          </div>
+          <button
+            onClick={async () => {
+              const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(
+                `@farbarterbot please help me sell XXX for XXX USDC. here goes the image for the listing on /farbarter`
+              )}`;
+              try {
+                const context = await sdk.context;
+                if (context?.user?.fid) {
+                  sdk.actions.openUrl(url);
+                } else {
+                  window.open(url, "_blank");
+                }
+              } catch (error) {
+                window.open(url, "_blank");
+              }
+            }}
+            className="bg-gradient-to-r from-[#7C3AED] to-[#6366F1] hover:from-[#6D28D9] hover:to-[#4F46E5] text-white font-bold py-4 px-8 rounded-xl shadow-lg transform hover:scale-105 transition-all duration-300 animate-pulse hover:animate-none border-2 border-transparent hover:border-[#A855F7]"
+          >
+            🪄 Cast and Tag @farbarterbot ✨
+          </button>
+        </div>
+
         {loading ? (
           <div className="w-full max-w-6xl flex items-center justify-center mb-16">
             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#7C3AED]" />
@@ -261,6 +288,17 @@ function App({ title = "farbarter" }: Props) {
             you.*
           </p>
         </div>
+        <button
+          onClick={() => {
+            sdk.actions.openUrl(
+              `https://warpcast.com/~/compose?text=${encodeURIComponent(
+                `@jpfraneto this is the feedback i have for /farbarter    `
+              )}`
+            );
+          }}
+        >
+          Tag @farbarterbot
+        </button>
       </div>
     </div>
   );
