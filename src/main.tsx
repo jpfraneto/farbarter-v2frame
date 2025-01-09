@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import "./index.css";
 import ListingPage from "./pages/ListingPage";
+import FarcasterJson from "./pages/FarcasterJson.json";
 
 const router = createBrowserRouter([
   {
@@ -13,6 +14,17 @@ const router = createBrowserRouter([
   {
     path: "/listings/:listingId",
     element: <ListingPage />,
+  },
+  {
+    path: ".well-known/farcaster.json",
+    loader: () => {
+      return new Response(JSON.stringify(FarcasterJson), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+    },
   },
 ]);
 

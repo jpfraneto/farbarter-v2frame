@@ -1,0 +1,24 @@
+{
+  "accountAssociation": {
+    "header": "eyJhbGciOiJFZERTQSIsImtpZCI6IjB4YjJiMWM0MjAiLCJ0eXAiOiJKV1QifQ",
+    "payload": "eyJkb21haW4iOiJmYXJiYXJ0ZXIuY29tIn0",
+    "signature": "0x1234567890abcdef"
+  },
+  "frame": {
+    "image": "https://farbarter.com/api/frame/image",
+    "version": "vNext",
+    "buttons": [
+      {
+        "label": "Browse Listings",
+        "action": "post"
+      }
+    ],
+    "post_url": "https://farbarter.com/api/frame"
+  },
+  "triggers": [
+    {
+      "url": "https://farbarter.com/api/trigger",
+      "method": "POST"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ const ListingPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isReserved, setIsReserved] = useState(false);
   const [paymentLink, setPaymentLink] = useState<string | null>(null);
+  const [isGeneratingPayment, setIsGeneratingPayment] = useState(false);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -17,6 +18,7 @@ const ListingPage: React.FC = () => {
         if (!listingId) throw new Error("No listing ID provided");
         const details = await getListingDetails(listingId);
         setListing(details);
+        setError(null);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : "Failed to fetch listing"
@@ -27,47 +29,63 @@ const ListingPage: React.FC = () => {
     fetchListing();
   }, [listingId]);
 
-  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
-  if (!listing) return <div className="p-4">Loading...</div>;
+  if (!listing)
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin">
+          <div className="w-10 h-10 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin-reverse"></div>
+        </div>
+      </div>
+    );
 
   // Create the Frame embed metadata
-  const frameEmbed = {
-    version: "next",
-    imageUrl: listing.metadata.imageUrl,
-    button: {
-      title: `Buy for ${listing.price} USDC`,
-      action: {
-        type: "launch_frame",
-        name: "Farbarter",
-        url: `${window.location.origin}/listings/${listingId}/buy`,
-        splashImageUrl: listing.metadata.imageUrl,
-        splashBackgroundColor: "#000000",
-      },
-    },
-  };
 
   async function buyListing() {
+    setIsGeneratingPayment(true);
     try {
       const response = await axios.get(
         `https://farcaster.anky.bot/farbarter/generate-payment-link/${listingId}`
       );
-      console.log(response);
       const data = response.data;
       console.log("the data is", data);
-      setIsReserved(true);
-      setPaymentLink(data.url.paymentLink);
+      setPaymentLink(data.paymentUrl);
+      setError(null);
       setTimeout(() => {
         setIsReserved(false);
+        setPaymentLink(null);
       }, 5 * 60 * 1000);
+      setIsReserved(true);
     } catch (error) {
       console.error(error);
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Failed to generate payment link"
+      );
+    } finally {
+      setIsGeneratingPayment(false);
     }
   }
+  const frameEmbedInfo = {
+    version: "next",
+    imageUrl: listing.metadata.imageUrl,
+    button: {
+      title: `buy for ${listing.price} USDC`,
+      action: {
+        type: "launch_frame",
+        name: "Farbarter",
+        url: `https://farbarter.com/listings/${listingId}`,
+        splashImageUrl: listing.metadata.imageUrl,
+        splashBackgroundColor: "#4D8C97",
+      },
+    },
+  };
 
   return (
     <>
       <Helmet>
-        <meta name="fc:frame" content={JSON.stringify(frameEmbed)} />
+        <meta name="fc:frame" content={JSON.stringify(frameEmbedInfo)} />
+
         <meta property="og:title" content={listing.metadata.name} />
         <meta
           property="og:description"
@@ -77,6 +95,11 @@ const ListingPage: React.FC = () => {
       </Helmet>
 
       <div className="w-full min-h-screen bg-[#13111C] text-[#E2E8F0] font-[Space_Grotesk] overflow-x-hidden">
+        {error && (
+          <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 bg-red-500/90 text-white px-6 py-3 rounded-lg shadow-lg">
+            {error}
+          </div>
+        )}
         <div className="min-h-screen flex justify-center items-center p-4 md:p-8 relative bg-[radial-gradient(circle_at_top_right,#7C3AED_0%,transparent_60%),radial-gradient(circle_at_bottom_left,#C084FC_0%,transparent_60%)]">
           <div className="w-full max-w-3xl bg-[#1A1625]/90 rounded-xl border border-[#7C3AED] overflow-hidden shadow-xl">
             <div className="relative w-full">
@@ -138,23 +161,36 @@ const ListingPage: React.FC = () => {
               {listing.isActive ? (
                 <>
                   {isReserved ? (
-                    <div className="flex gap-4 mt-6">
+                    <div className="flex flex-col gap-4 mt-6">
                       <a
                         className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
                         href={paymentLink || ""}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        pay {listing.price} USDC now
+                        Pay {listing.price} USDC now
                       </a>
+                      <button
+                        className="text-sm text-[#E2E8F0]/50 hover:text-[#E2E8F0]/80 transition-colors"
+                        onClick={() =>
+                          navigator.clipboard.writeText(paymentLink || "")
+                        }
+                      >
+                        Copy payment link
+                      </button>
                     </div>
                   ) : (
                     <div className="flex gap-4 mt-6">
                       <button
-                        className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
+                        className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg flex justify-center items-center"
                         onClick={buyListing}
+                        disabled={isGeneratingPayment}
                       >
-                        Buy for {listing.price} USDC
+                        {isGeneratingPayment ? (
+                          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          `Buy for ${listing.price} USDC`
+                        )}
                       </button>
                       <button
                         className="w-2/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
