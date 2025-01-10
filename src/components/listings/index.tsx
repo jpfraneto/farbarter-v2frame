@@ -6,6 +6,7 @@ import { ListingStats } from "./ListingStats";
 import { ListingHeader } from "./ListingHeader";
 import { ListingAction } from "./ListingAction";
 import type { ListingDetails } from "../../lib/listings";
+import { formatUnits } from "viem";
 
 interface ListingContainerProps {
   listingId: string;
@@ -14,6 +15,11 @@ interface ListingContainerProps {
 export default function ListingContainer({ listingId }: ListingContainerProps) {
   const [listing, setListing] = useState<ListingDetails | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const formatPrice = (price: string) => {
+    const priceInEth = Number(formatUnits(BigInt(price), 18));
+    return priceInEth.toFixed(4);
+  };
 
   useEffect(() => {
     async function fetchListing() {
@@ -69,7 +75,7 @@ export default function ListingContainer({ listingId }: ListingContainerProps) {
             />
 
             <ListingStats
-              price={listing.price}
+              price={formatPrice(listing.price)}
               remainingSupply={listing.remainingSupply}
               totalSupply={listing.metadata.supply}
               location={listing.metadata.location}

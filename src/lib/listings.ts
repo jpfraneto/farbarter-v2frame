@@ -1,5 +1,5 @@
-import { createPublicClient, formatUnits, http, type Address } from "viem";
-import { degen } from "viem/chains";
+import { createPublicClient, http, type Address } from "viem";
+import { base } from "viem/chains";
 import axios from "axios";
 import farbarter_abi from "./farbarter_abi.json";
 
@@ -22,13 +22,14 @@ export interface ListingMetadata {
   location: string;
   supply: number;
   isOnline: boolean;
+  price: string;
 }
 
 const FARBARTER_CONTRACT_ADDRESS =
-  "0x8d59e8ef33fb819979ad09fb444a26792970fb6f" as Address;
+  "0xbAeCa7e569eFea6e020014EAb898373407bBe826" as Address;
 
 const client = createPublicClient({
-  chain: degen,
+  chain: base,
   transport: http(),
 });
 
@@ -58,11 +59,12 @@ export async function getListingDetails(
     ];
 
     const metadata = await fetchMetadataFromIpfs(details[4]);
+    console.log("the metadata is", metadata);
 
     return {
       seller: details[0],
       fid: Number(details[1]),
-      price: formatUnits(details[2], 6),
+      price: metadata?.price,
       remainingSupply: Number(details[3]),
       metadata,
       isActive: details[5],

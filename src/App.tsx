@@ -175,7 +175,7 @@ function App({ title = "farbarter" }: Props) {
             <button
               onClick={async () => {
                 const url = `https://warpcast.com/~/compose?text=${encodeURIComponent(
-                  `@farbarterbot please help me sell XXX for XXX USDC. here goes the image for the listing on /farbarter`
+                  `@farbarterbot please help me sell XXX for XXX eth. here goes the image for the listing on /farbarter`
                 )}`;
                 try {
                   const context = await sdk.context;
@@ -305,7 +305,7 @@ function App({ title = "farbarter" }: Props) {
               <p className="text-[#E2E8F0]/80">
                 2. Tag @farbarterbot with what you want to sell
               </p>
-              <p className="text-[#E2E8F0]/80">3. Set your price in USDC</p>
+              <p className="text-[#E2E8F0]/80">3. Set your price in eth</p>
               <p className="text-[#E2E8F0]/80">4. Share with your audience!</p>
             </div>
           </div>

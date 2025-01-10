@@ -19,7 +19,7 @@ export function ListingStats({
     <div className="grid grid-cols-2 gap-4 py-4 border-y border-slate-700">
       <div>
         <h3 className="text-sm font-mono text-cyan-400">Price</h3>
-        <p className="mt-1 text-xl font-bold text-white">{price} USDC</p>
+        <p className="mt-1 text-xl font-bold text-white">{price} eth</p>
       </div>
       <div>
         <h3 className="text-sm font-mono text-cyan-400">Available</h3>

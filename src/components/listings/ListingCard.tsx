@@ -4,8 +4,8 @@ import { ListingCardProps } from "./ListingsGrid";
 
 export const ListingCard = ({ listing }: ListingCardProps) => {
   const formatPrice = (price: string) => {
-    const priceInUsd = Number(formatUnits(BigInt(price), 6));
-    return priceInUsd.toFixed(2);
+    const priceInEth = Number(formatUnits(BigInt(price), 18));
+    return priceInEth.toFixed(4);
   };
   console.log("INSIDE THE LISTING CARD", listing);
 
@@ -20,7 +20,7 @@ export const ListingCard = ({ listing }: ListingCardProps) => {
           />
           <div className="absolute top-2 right-2 bg-[#1A1625]/90 px-3 py-1 rounded-full border border-[#7C3AED]">
             <span className="text-sm font-medium">
-              {formatPrice(listing.price)} USDC
+              {formatPrice(listing.price)} eth
             </span>
           </div>
         </div>

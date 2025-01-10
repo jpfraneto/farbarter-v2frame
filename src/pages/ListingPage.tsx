@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import { getListingDetails, type ListingDetails } from "../lib/listings";
 import axios from "axios";
 import sdk from "@farcaster/frame-sdk";
+import { formatUnits } from "viem";
 
 const ListingPage: React.FC = () => {
   const { listingId } = useParams();
@@ -19,6 +20,7 @@ const ListingPage: React.FC = () => {
       try {
         if (!listingId) throw new Error("No listing ID provided");
         const details = await getListingDetails(listingId);
+        console.log("the details are", details);
         setListing(details);
         setError(null);
         try {
@@ -77,11 +79,12 @@ const ListingPage: React.FC = () => {
       setIsGeneratingPayment(false);
     }
   }
+
   const frameEmbedInfo = {
     version: "next",
     imageUrl: listing.metadata.imageUrl,
     button: {
-      title: `buy for ${listing.price} USDC`,
+      title: `buy for ${listing.price} eth`,
       action: {
         type: "launch_frame",
         name: "Farbarter",
@@ -133,7 +136,7 @@ const ListingPage: React.FC = () => {
                 <div className="bg-[#1A1625]/80 p-3 md:p-4 rounded-xl border border-[#7C3AED]">
                   <h2 className="text-xs md:text-sm text-[#A855F7]">Price</h2>
                   <p className="text-lg md:text-xl font-semibold text-[#E2E8F0]">
-                    {listing.price} USDC
+                    {listing.price} eth
                   </p>
                 </div>
                 <div className="bg-[#1A1625]/80 p-3 md:p-4 rounded-xl border border-[#7C3AED]">
@@ -175,24 +178,33 @@ const ListingPage: React.FC = () => {
                     <>
                       <button
                         onClick={() => {
-                          // call directly the smart contract to complete the purchase
+                          // IMPLEMENT THIS -> very important the user calls it directly from their connected wallet
                         }}
                       >
-                        Pay {listing.price} USDC now
+                        Pay {listing.price} eth now
                       </button>
                     </>
                   ) : (
                     <>
                       {isReserved ? (
                         <div className="flex flex-col gap-4 mt-6">
-                          <a
-                            className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
-                            href={paymentLink || ""}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Pay {listing.price} USDC now
-                          </a>
+                          <div className="flex gap-4 mt-6">
+                            <a
+                              className="w-3/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
+                              href={paymentLink || ""}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Pay {listing.price} eth now
+                            </a>
+                            <button
+                              className="w-2/5 bg-[#7C3AED] text-white py-3 md:py-4 px-6 rounded-xl hover:bg-[#6D28D9] transition-colors font-bold text-base md:text-lg"
+                              onClick={() => (window.location.href = "/")}
+                            >
+                              Back
+                            </button>
+                          </div>
+
                           <button
                             className="text-sm text-[#E2E8F0]/50 hover:text-[#E2E8F0]/80 transition-colors"
                             onClick={() =>
@@ -212,7 +224,7 @@ const ListingPage: React.FC = () => {
                             {isGeneratingPayment ? (
                               <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
                             ) : (
-                              `Buy for ${listing.price} USDC`
+                              `Buy for ${listing.price} eth`
                             )}
                           </button>
                           <button
