@@ -32,7 +32,7 @@ const frameData: FrameEmbed = {
       type: "launch_frame",
       name: "Farbarter",
       url: "https://farbarter.com",
-      splashImageUrl: "",
+      splashImageUrl: "https://farbarter.com/splash.jpeg",
       splashBackgroundColor: "#4D8C97",
     },
   },
